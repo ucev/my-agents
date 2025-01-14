@@ -4,6 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "game24:base": "node agents/game24/base/index.mjs",
+    "game24:cot": "node agents/game24/cot/index.mjs",
+    "game24:tools": "node agents/game24/tools/index.mjs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
