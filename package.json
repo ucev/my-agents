@@ -12,7 +12,9 @@
   "dependencies": {
     "@langchain/community": "^0.3.24",
     "@langchain/core": "^0.3.28",
+    "@langchain/langgraph": "^0.2.39",
     "@langchain/openai": "^0.3.16",
+    "chalk": "^5.4.1",
     "cheerio": "^1.0.0",
     "dotenv": "^16.4.7",
     "faiss-node": "^0.5.1",

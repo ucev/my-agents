@@ -2,9 +2,9 @@ import './loadenv.mjs';
 import { ChatOpenAI } from '@langchain/openai';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { DoubaoEmbeddings } from './embedding/DoubaoEmbedding.mjs';
 import { JSONChatHistory } from './JSONChatHistory/index.mjs';
 import { FaissStore } from '@langchain/community/vectorstores/faiss';
+import { ByteDanceDoubaoEmbeddings } from '@langchain/community/embeddings/bytedance_doubao';
 
 export const getModel = (fields) => new ChatOpenAI({
     model: process.env.OPENAI_MODEL,
@@ -14,7 +14,7 @@ export const getModel = (fields) => new ChatOpenAI({
     }
 })
 
-export const getEmbeddings = () => new DoubaoEmbeddings({
+export const getEmbeddings = () => new ByteDanceDoubaoEmbeddings({
     apiKey: process.env.OPENAI_API_KEY,
     modelName: process.env.OPENAI_MODEL_EMBEDDING,
 })
@@ -45,4 +45,8 @@ export const loadVectorStore = async (name) => {
         directory,
         getEmbeddings()
     )
+}
+
+export const parseNumbers = (str) => {
+    return str.split(/\s+/).map(Number.parseFloat);
 }
