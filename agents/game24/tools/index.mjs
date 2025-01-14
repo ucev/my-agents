@@ -12,7 +12,7 @@ const tools = [
         name: 'get_points_24',
         description: '24点计算器，输入4个数字，判断这四个数字是否能通过加减乘除运算得到24',
         schema: z.object({
-            numbers: z.number().array().length(4).describe('输入4个数字')
+            numbers: z.number().array().length(4).describe('用于计算24点的四个数字')
         }),
         func: async ({ numbers }) => {
             console.log('--- input, ', numbers);
