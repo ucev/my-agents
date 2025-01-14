@@ -3,22 +3,21 @@ import { DynamicStructuredTool, DynamicTool } from 'langchain/tools'
 import { z } from 'zod'
 import { ChatPromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemplate } from '@langchain/core/prompts'
 // import { createReactAgent } from 'langchain/agents'
-import { Calculator } from "@langchain/community/tools/calculator";
 import { createReactAgent } from '@langchain/langgraph/prebuilt'
 import { RunnableSequence } from '@langchain/core/runnables';
-import { getPoints24 } from './utils.mjs';
+import { getPoints24, responseParser, examples } from './utils.mjs';
 
 const tools = [
     new DynamicStructuredTool({
         name: 'get_points_24',
         description: '24点计算器，输入4个数字，判断这四个数字是否能通过加减乘除运算得到24',
         schema: z.object({
-            numbers: z.number().array().length(4)
+            numbers: z.number().array().length(4).describe('输入4个数字')
         }),
         func: async ({ numbers }) => {
             console.log('--- input, ', numbers);
             if (!Array.isArray(numbers) || numbers.length !== 4) {
-                throw new Error('请输入4个数字');
+                return `${numbers.join(',')} 不是合法的24点`
             }
             try {
                 return getPoints24(numbers) || `[result] ${numbers.join(',')} 经计算不能得出24点`;
@@ -28,7 +27,13 @@ const tools = [
             }
         }
     }),
-    new Calculator(),
+    new DynamicTool({
+        name: 'default_tool',
+        description: '默认tool，不能调用其余tool的时候使用',
+        func: () => {
+            return '我只能帮助你回答24点问题'
+        }
+    })
 ];
 
 // [
@@ -86,18 +91,25 @@ const agent = createReactAgent({
 const chain = RunnableSequence.from([
     prompt,
     agent,
-    (response) => {
-        return response.messages[response.messages.length - 1].content
-    },
-])
-console.log(await chain.batch(
-    [
-        {
-            input: '7 7 5 8'
-        }, {
-            input: '4, 4,6,8'
-        }, {
-            input: '1 2 3'
-        }
+    responseParser,
+]);
+for (const item of examples) {
+    console.log(await chain.invoke({
+        input: item.join(' '),
+    }))
+}
+// console.log(await chain.batch(
+//     [
+//         {
+//             input: '7 7 5 8'
+//         }, {
+//             input: '4, 4,6,8'
+//         }
+//     ]
+// ))
+console.log(responseParser(await agent.invoke({
+    messages: [
+        { role: 'system', content: '你是一个百科全书，帮助解答用户疑问' },
+        { role: 'user', content: '为什么打雷会下雨' }
     ]
-))
+})))

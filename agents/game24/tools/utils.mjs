@@ -91,3 +91,18 @@ export const getPoints24 = (numbers, steps = [], visited = new Set()) => {
     }
     return false;
 }
+
+export const responseParser = (response) => {
+    return response.messages[response.messages.length - 1].content
+}
+
+export const examples = [
+    [1, 2, 3, 4],
+    [4, 4, 6, 8],
+    [3, 3, 3, 3],
+    [7, 7, 5, 8],
+    [2, 2, 2, 2],
+    [3, 3, 8, 8],
+    [5, 5, 1, 5],
+    [2, 2, 4, 8],
+]
